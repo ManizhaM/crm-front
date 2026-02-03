@@ -1,0 +1,35 @@
+/* App Layout */
+.app {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.main-content {
+  min-height: calc(100vh - 64px);
+  padding: var(--space-6);
+  transition: margin-left var(--transition-base);
+}
+
+.main-content.with-sidebar {
+  margin-left: 0;
+}
+
+.main-content.with-sidebar.sidebar-open {
+  margin-left: 280px;
+}
+
+@media (max-width: 1024px) {
+  .main-content.with-sidebar {
+    margin-left: 0 !important;
+  }
+  
+  .main-content {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: var(--space-3);
+  }
+}

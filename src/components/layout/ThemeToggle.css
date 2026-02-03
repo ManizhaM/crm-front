@@ -1,0 +1,74 @@
+/* ThemeToggle Component Styles */
+
+.theme-toggle {
+  position: relative;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  transition: background-color var(--transition-base);
+}
+
+.theme-toggle:hover {
+  background: var(--surface-hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-toggle-thumb {
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-icon {
+  width: 14px;
+  height: 14px;
+  color: #667eea;
+}
+
+/* Анимация при наведении */
+.theme-toggle:hover .theme-toggle-thumb {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .theme-toggle-track {
+    width: 48px;
+    height: 24px;
+  }
+  
+  .theme-toggle-thumb {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .theme-icon {
+    width: 12px;
+    height: 12px;
+  }
+}

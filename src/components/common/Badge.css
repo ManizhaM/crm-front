@@ -1,0 +1,121 @@
+/* Badge Component Styles */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-family: var(--font-family);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+/* Sizes */
+.badge-sm {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.badge-md {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.badge-lg {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-base);
+}
+
+/* Variants */
+.badge-default {
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+}
+
+.badge-primary {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--primary);
+}
+
+.badge-secondary {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--secondary);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.badge-info {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--info);
+}
+
+/* Темная тема */
+[data-theme="dark"] .badge-default {
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .badge-primary {
+  background: rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .badge-secondary {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+[data-theme="dark"] .badge-success {
+  background: rgba(52, 211, 153, 0.2);
+}
+
+[data-theme="dark"] .badge-warning {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+[data-theme="dark"] .badge-danger {
+  background: rgba(248, 113, 113, 0.2);
+}
+
+[data-theme="dark"] .badge-info {
+  background: rgba(34, 211, 238, 0.2);
+}
+
+/* Rounded */
+.badge-rounded {
+  border-radius: var(--radius-full);
+}
+
+/* Status icon */
+.status-icon {
+  font-size: 0.875em;
+  line-height: 1;
+}
+
+/* Hover effect for interactive badges */
+.badge-interactive {
+  cursor: pointer;
+  user-select: none;
+}
+
+.badge-interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge-interactive:active {
+  transform: translateY(0);
+}
