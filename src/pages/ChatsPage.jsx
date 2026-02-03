@@ -36,7 +36,7 @@ const ChatsPage = () => {
     if (!token) return;
 
     const newConnection = new HubConnectionBuilder()
-      .withUrl("http://localhost:5094/chatHub", {
+      .withUrl("https://bankcrm-1.onrender.com/chatHub", {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()

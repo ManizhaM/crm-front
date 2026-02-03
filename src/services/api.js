@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5094/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://bankcrm-1.onrender.com/api';
 
 // Создаем инстанс axios
 const axiosInstance = axios.create({

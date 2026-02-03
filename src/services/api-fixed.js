@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
 // Базовый URL API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5094';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://bankcrm-1.onrender.com';
 
 /**
  * Создание экземпляра axios с настройками
