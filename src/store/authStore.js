@@ -11,7 +11,8 @@ export const useAuthStore = create(
       user: null,
       token: null,
       isAuthenticated: false,
-      permissions: null, // Объект с разрешениями пользователя
+      permissions: null,
+      permissionsLoaded: false, // Флаг, что разрешения уже загружены
       
       // Вход в систему
       login: async (userData, token) => {
@@ -41,7 +42,8 @@ export const useAuthStore = create(
           user: null,
           token: null,
           isAuthenticated: false,
-          permissions: null
+          permissions: null,
+          permissionsLoaded: false
         });
       },
       
@@ -67,8 +69,24 @@ export const useAuthStore = create(
               isAuthenticated: true
             });
 
-            // Загрузить разрешения
-            await get().loadPermissions();
+            // Загрузить разрешения только если еще не загружены
+            const state = get();
+            if (!state.permissionsLoaded) {
+              await get().loadPermissions();
+            } else {
+              // Попробовать загрузить из кэша
+              const cachedPermissions = localStorage.getItem('permissions');
+              if (cachedPermissions) {
+                try {
+                  const permissions = JSON.parse(cachedPermissions);
+                  set({ permissions, permissionsLoaded: true });
+                } catch (e) {
+                  console.error('Ошибка при парсинге кэшированных разрешений:', e);
+                  await get().loadPermissions();
+                }
+              }
+            }
+            
             return true;
           } catch (error) {
             console.error('Ошибка при восстановлении сессии:', error);
@@ -86,21 +104,52 @@ export const useAuthStore = create(
           const permissionsData = response.data;
           
           localStorage.setItem('permissions', JSON.stringify(permissionsData));
-          set({ permissions: permissionsData });
+          set({ 
+            permissions: permissionsData,
+            permissionsLoaded: true 
+          });
           
           return permissionsData;
         } catch (error) {
           console.error('Ошибка при загрузке разрешений:', error);
+          
           // Если не удалось загрузить, попробовать из локального хранилища
           const cachedPermissions = localStorage.getItem('permissions');
           if (cachedPermissions) {
             try {
               const permissions = JSON.parse(cachedPermissions);
-              set({ permissions });
+              set({ 
+                permissions,
+                permissionsLoaded: true 
+              });
+              return permissions;
             } catch (e) {
               console.error('Ошибка при парсинге кэшированных разрешений:', e);
             }
           }
+          
+          // Если API недоступен, используем fallback с минимальными правами
+          if (error.response?.status === 404 || error.code === 'ERR_NETWORK') {
+            console.warn('API разрешений недоступен, используется fallback');
+            const fallbackPermissions = {
+              userId: 0,
+              username: 'unknown',
+              permissions: [],
+              permissionsByResource: {
+                tickets: { canView: true, canCreate: false, canEdit: true, canDelete: false },
+                chats: { canView: true, canCreate: false, canEdit: true, canDelete: false },
+                references: { canView: true, canCreate: false, canEdit: false, canDelete: false },
+                settings: { canView: true, canCreate: false, canEdit: false, canDelete: false },
+                notifications: { canView: true, canCreate: false, canEdit: false, canDelete: false }
+              }
+            };
+            set({ 
+              permissions: fallbackPermissions,
+              permissionsLoaded: true 
+            });
+            return fallbackPermissions;
+          }
+          
           return null;
         }
       },

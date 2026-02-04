@@ -19,24 +19,28 @@ const ChatsPage = () => {
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Загрузка списка чатов
   const { data: chatsData, isLoading } = useQuery({
     queryKey: ['chats'],
     queryFn: async () => {
       const response = await api.chats.getAll();
       return response.data;
     },
+    staleTime: 30000, // Кэшируем на 30 секунд
   });
 
   const chats = Array.isArray(chatsData) ? chatsData : [];
 
+  // Установка SignalR соединения (один раз)
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (!token) return;
 
     const newConnection = new HubConnectionBuilder()
-      .withUrl("https://bankcrm-1.onrender.com/chatHub", {
+      .withUrl("http://localhost:5094/chatHub", {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
@@ -50,8 +54,12 @@ const ChatsPage = () => {
           timestamp: new Date().toISOString(),
           isRead: false
         }]);
-        api.chats.markAsRead(chatId);
+        // Отмечаем как прочитанное без перезагрузки списка
+        api.chats.markAsRead(chatId).catch(err => 
+          console.error('Error marking as read:', err)
+        );
       } else {
+        // Только обновляем счетчик непрочитанных
         queryClient.invalidateQueries(['chats']);
         toast('Новое сообщение в чате #' + chatId);
       }
@@ -71,22 +79,48 @@ const ChatsPage = () => {
         newConnection.stop();
       }
     };
-  }, [selectedChat, queryClient]);
+  }, []); // Убрали зависимости - соединение устанавливается один раз
 
+  // Загрузка сообщений при выборе чата
   useEffect(() => {
     if (selectedChat && connection) {
-      api.chats.getById(selectedChat.id).then(response => {
-        setMessages(response.data);
-        api.chats.markAsRead(selectedChat.id);
-        queryClient.invalidateQueries(['chats']);
-      });
+      setLoadingMessages(true);
+      
+      // Загружаем сообщения
+      api.chats.getById(selectedChat.id)
+        .then(response => {
+          setMessages(response.data);
+          setLoadingMessages(false);
+          
+          // Отмечаем как прочитанное
+          return api.chats.markAsRead(selectedChat.id);
+        })
+        .then(() => {
+          // Обновляем только счетчик непрочитанных в списке
+          // НЕ перезагружаем весь список чатов
+          queryClient.setQueryData(['chats'], (oldData) => {
+            if (!oldData) return oldData;
+            return oldData.map(chat => 
+              chat.id === selectedChat.id 
+                ? { ...chat, unread: false, unreadCount: 0 }
+                : chat
+            );
+          });
+        })
+        .catch(err => {
+          console.error('Error loading messages:', err);
+          setLoadingMessages(false);
+          toast.error('Ошибка загрузки сообщений');
+        });
 
+      // Присоединяемся к чату через SignalR
       connection.invoke("JoinChat", selectedChat.id).catch(err => 
         console.error("Error joining chat:", err)
       );
     }
-  }, [selectedChat, connection, queryClient]);
+  }, [selectedChat?.id, connection]); // Зависимость только от ID чата
 
+  // Автоскролл при новых сообщениях
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -178,21 +212,33 @@ const ChatsPage = () => {
             </div>
 
             <div className="chats-messages">
-              {messages.map((msg, idx) => (
-                <motion.div
-                  key={idx}
-                  className={`message ${msg.type === 0 ? 'outgoing' : 'incoming'}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
-                  <div className="message-content">
-                    <p>{msg.text}</p>
-                    <span className="message-time">
-                      {new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
+              {loadingMessages ? (
+                <div className="messages-loading">
+                  <div className="spinner"></div>
+                  <p>Загрузка сообщений...</p>
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="messages-empty">
+                  <p>Нет сообщений в этом чате</p>
+                </div>
+              ) : (
+                messages.map((msg, idx) => (
+                  <motion.div
+                    key={idx}
+                    className={`message ${msg.type === 0 ? 'outgoing' : 'incoming'}`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="message-content">
+                      <p>{msg.text}</p>
+                      <span className="message-time">
+                        {new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))
+              )}
               <div ref={messagesEndRef} />
             </div>
 

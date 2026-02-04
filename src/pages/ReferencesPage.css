@@ -1,1 +1,518 @@
-.references-page{max-width:1400px;margin:0 auto}.references-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-6)}.references-header h1{margin:0;font-size:var(--text-3xl);font-weight:var(--font-bold);color:var(--text-primary)}.references-tabs{display:flex;gap:var(--space-2);margin-bottom:var(--space-6);border-bottom:2px solid var(--border-light)}.references-tabs button{padding:var(--space-3) var(--space-4);background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-secondary);font-size:var(--text-base);font-weight:var(--font-medium);cursor:pointer;transition:all var(--transition-base);margin-bottom:-2px}.references-tabs button:hover{color:var(--text-primary)}.references-tabs button.active{color:var(--primary);border-bottom-color:var(--primary)}.references-content{display:grid;grid-template-columns:1fr 400px;gap:var(--space-6)}.references-list{display:flex;flex-direction:column;gap:var(--space-4)}.reference-item{display:flex;justify-content:space-between;align-items:center;padding:var(--space-4);background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-lg);transition:all var(--transition-base)}.reference-item:hover{box-shadow:var(--shadow-md)}.reference-item h3{margin:0 0 var(--space-2) 0;font-size:var(--text-lg);font-weight:var(--font-semibold);color:var(--text-primary)}.reference-item p{margin:0;font-size:var(--text-sm);color:var(--text-secondary)}.reference-actions{display:flex;gap:var(--space-2)}.reference-actions button{display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:transparent;border:none;border-radius:var(--radius-md);color:var(--text-secondary);cursor:pointer;transition:all var(--transition-base)}.reference-actions button:hover{background:var(--surface-hover);color:var(--text-primary)}.reference-form{padding:var(--space-6);background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius-xl);position:sticky;top:var(--space-6)}.reference-form h3{margin:0 0 var(--space-6) 0;font-size:var(--text-xl);font-weight:var(--font-semibold);color:var(--text-primary)}.reference-form input,.reference-form textarea{width:100%;padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);background:var(--background);border:1px solid var(--border-light);border-radius:var(--radius-lg);color:var(--text-primary);font-size:var(--text-base);font-family:var(--font-family)}.form-actions{display:flex;gap:var(--space-3);justify-content:flex-end}@media(max-width:1024px){.references-content{grid-template-columns:1fr}}
+.references-page {
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Заголовок */
+.references-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.references-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.references-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Вкладки */
+.references-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 0;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab-button:hover {
+  color: var(--text-primary);
+  background: var(--hover-light);
+}
+
+.tab-button.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: transparent;
+}
+
+.tab-button svg {
+  font-size: 1.25rem;
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.5rem;
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.tab-button.active .tab-count {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Контент */
+.references-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+.references-content.with-form {
+  grid-template-columns: 1fr 400px;
+}
+
+/* Список */
+.references-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* Элемент списка */
+.reference-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.reference-item:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.reference-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reference-item h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+}
+
+.reference-item p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.reference-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+}
+
+.reference-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--surface-alt);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-edit:hover:not(:disabled) {
+  background: var(--info-light);
+  border-color: var(--info);
+  color: var(--info);
+}
+
+.btn-delete:hover:not(:disabled) {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Состояния загрузки и пустоты */
+.references-loading,
+.references-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 1rem;
+  color: var(--text-secondary);
+}
+
+.references-loading .spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-light);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Панель формы */
+.reference-form-panel {
+  position: sticky;
+  top: 0;
+  height: fit-content;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.reference-form {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.form-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.btn-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.form-body {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--background);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.9375rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-footer {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.form-footer button {
+  flex: 1;
+}
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-2xl);
+  width: 100%;
+  max-width: 500px;
+}
+
+.modal-small {
+  max-width: 450px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-body p {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+.modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+.text-danger {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.modal-footer button {
+  flex: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .references-content.with-form {
+    grid-template-columns: 1fr;
+  }
+
+  .reference-form-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 400px;
+    max-height: 100vh;
+    z-index: 100;
+  }
+}
+
+@media (max-width: 768px) {
+  .references-page {
+    padding: 1rem;
+  }
+
+  .references-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .references-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-button {
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+  }
+
+  .reference-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .reference-item-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .reference-form-panel {
+    width: 100%;
+  }
+}
+
+/* Темная тема */
+[data-theme="dark"] .tab-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .reference-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group textarea,
+[data-theme="dark"] .form-group select {
+  background: #1a1a1a;
+}
+
+/* Скроллбар */
+.references-list::-webkit-scrollbar,
+.reference-form-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.references-list::-webkit-scrollbar-track,
+.reference-form-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.references-list::-webkit-scrollbar-thumb,
+.reference-form-panel::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+
+.references-list::-webkit-scrollbar-thumb:hover,
+.reference-form-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

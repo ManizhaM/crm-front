@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://bankcrm-1.onrender.com/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5094';
 
 // Создаем инстанс axios
 const axiosInstance = axios.create({
@@ -36,7 +36,6 @@ axiosInstance.interceptors.response.use(
     
     // Обработка 403 (нет прав доступа)
     if (error.response?.status === 403) {
-      // Можно показать тост или редирект на страницу 403
       console.error('Доступ запрещен');
     }
     
@@ -48,101 +47,185 @@ axiosInstance.interceptors.response.use(
 export const api = {
   // Аутентификация
   auth: {
-    login: (credentials) => axiosInstance.post('/auth/login', credentials),
-    register: (userData) => axiosInstance.post('/auth/register', userData),
-    resetPassword: (data) => axiosInstance.post('/auth/reset-password', data),
-    getAllUsers: (params) => axiosInstance.get('/auth/users', { params }),
-    getUserById: (id) => axiosInstance.get(`/auth/user/${id}`),
-    updateUser: (id, data) => axiosInstance.put(`/auth/user/${id}`, data),
-    deleteUser: (id) => axiosInstance.delete(`/auth/user/${id}`),
-    adminResetPassword: (id, data) => axiosInstance.post(`/auth/user/${id}/reset-password`, data),
+    login: (credentials) => axiosInstance.post('/api/auth/login', credentials),
+    register: (userData) => axiosInstance.post('/api/auth/register', userData),
+    resetPassword: (data) => axiosInstance.post('/api/auth/reset-password', data),
+    getAllUsers: (params) => axiosInstance.get('/api/auth/users', { params }),
+    getUserById: (id) => axiosInstance.get(`/api/auth/user/${id}`),
+    updateUser: (id, data) => axiosInstance.put(`/api/auth/user/${id}`, data),
+    deleteUser: (id) => axiosInstance.delete(`/api/auth/user/${id}`),
+    adminResetPassword: (id, data) => axiosInstance.post(`/api/auth/user/${id}/reset-password`, data),
   },
 
   // Роли и разрешения
   roles: {
     // Роли
-    getRoles: () => axiosInstance.get('/roles'),
-    getRole: (id) => axiosInstance.get(`/roles/${id}`),
-    createRole: (data) => axiosInstance.post('/roles', data),
-    updateRole: (id, data) => axiosInstance.put(`/roles/${id}`, data),
-    deleteRole: (id) => axiosInstance.delete(`/roles/${id}`),
+    getRoles: () => axiosInstance.get('/api/roles'),
+    getRole: (id) => axiosInstance.get(`/api/roles/${id}`),
+    createRole: (data) => axiosInstance.post('/api/roles', data),
+    updateRole: (id, data) => axiosInstance.put(`/api/roles/${id}`, data),
+    deleteRole: (id) => axiosInstance.delete(`/api/roles/${id}`),
     
     // Разрешения
-    getPermissions: () => axiosInstance.get('/permissions'),
-    getGroupedPermissions: () => axiosInstance.get('/permissions/grouped'),
+    getPermissions: () => axiosInstance.get('/api/permissions'),
+    getGroupedPermissions: () => axiosInstance.get('/api/permissions/grouped'),
     
     // Назначение ролей пользователям
     assignRoleToUser: (userId, roleId) => 
-      axiosInstance.post(`/users/${userId}/roles`, { userId, roleId }),
+      axiosInstance.post(`/api/users/${userId}/roles`, { userId, roleId }),
     removeRoleFromUser: (userId, roleId) => 
-      axiosInstance.delete(`/users/${userId}/roles/${roleId}`),
+      axiosInstance.delete(`/api/users/${userId}/roles/${roleId}`),
   },
 
   // Пользователи
   users: {
-    getMyPermissions: () => axiosInstance.get('/users/me/permissions'),
+    getAll: () => axiosInstance.get('/api/users'),
+    getById: (id) => axiosInstance.get(`/api/users/${id}`),
+    getMe: () => axiosInstance.get('/api/users/me'),
+    getOperators: () => axiosInstance.get('/api/users/operators'),
+    getAvailableOperators: () => axiosInstance.get('/api/users/operators/available'),
+    updateStatus: (id, active) => axiosInstance.put(`/api/users/${id}/status`, { active }),
+    updateRole: (id, role) => axiosInstance.put(`/api/users/${id}/role`, { role }),
+    getStats: (id) => axiosInstance.get(`/api/users/${id}/stats`),
+    setOnlineStatus: (isOnline) => axiosInstance.put('/api/users/set-online-status', null, { params: { isOnline } }),
+    getMyPermissions: () => axiosInstance.get('/api/users/me/permissions'),
     checkPermission: (resource, action) => 
-      axiosInstance.post('/users/me/permissions/check', { resource, action }),
+      axiosInstance.post('/api/users/me/permissions/check', { resource, action }),
   },
 
   // Заявки
   tickets: {
-    getTickets: (params) => axiosInstance.get('/tickets', { params }),
-    getTicket: (id) => axiosInstance.get(`/tickets/${id}`),
-    createTicket: (data) => axiosInstance.post('/tickets', data),
-    updateTicket: (id, data) => axiosInstance.put(`/tickets/${id}`, data),
-    deleteTicket: (id) => axiosInstance.delete(`/tickets/${id}`),
-    assignTicket: (id, operatorId) => axiosInstance.post(`/tickets/${id}/assign`, { operatorId }),
-    transferTicket: (id, data) => axiosInstance.post(`/tickets/${id}/transfer`, data),
-    closeTicket: (id, data) => axiosInstance.post(`/tickets/${id}/close`, data),
-    addInternalComment: (ticketId, comment) => 
-      axiosInstance.post(`/tickets/${ticketId}/comments`, { comment }),
+    getAll: (params) => axiosInstance.get('/api/tickets', { params }),
+    getById: (id) => axiosInstance.get(`/api/tickets/${id}`),
+    createManually: (data) => axiosInstance.post('/api/tickets/create-manual', data),
+    transfer: (id, data) => axiosInstance.post(`/api/tickets/${id}/transfer`, data),
+    getTransfers: (id) => axiosInstance.get(`/api/tickets/${id}/transfers`),
+    search: (query) => axiosInstance.get('/api/tickets/search', { params: { query } }),
+    changeStatus: (id, newStatus, comment) => axiosInstance.put(`/api/tickets/${id}/status`, { newStatus, comment }),
+    assignOperator: (id, operatorId) => axiosInstance.put(`/api/tickets/${id}/assign`, { operatorId }),
+    setTopic: (id, topicId, subcategoryId) => axiosInstance.put(`/api/tickets/${id}/topic`, { topicId, subcategoryId }),
+    addComment: (id, content) => axiosInstance.post(`/api/tickets/${id}/comments`, { content }),
+    getComments: (id) => axiosInstance.get(`/api/tickets/${id}/comments`),
+    getHistory: (id) => axiosInstance.get(`/api/tickets/${id}/history`),
+    rate: (id, rating, comment) => axiosInstance.post(`/api/tickets/${id}/rate`, { rating, comment }),
   },
 
   // Аналитика
   analytics: {
-    getDashboardStats: () => axiosInstance.get('/analytics/dashboard'),
-    getOperatorStats: (params) => axiosInstance.get('/analytics/operators', { params }),
-    getTicketStats: (params) => axiosInstance.get('/analytics/tickets', { params }),
+    getDashboard: () => axiosInstance.get('/api/analytics/dashboard'),
+    getOperators: () => axiosInstance.get('/api/analytics/operators'),
+    getTicketsByStatus: () => axiosInstance.get('/api/analytics/tickets/by-status'),
+    getTicketsByTopic: () => axiosInstance.get('/api/analytics/tickets/by-topic'),
+    getResponseTime: () => axiosInstance.get('/api/analytics/response-time'),
+    getResolutionTime: () => axiosInstance.get('/api/analytics/resolution-time'),
+    getSatisfaction: () => axiosInstance.get('/api/analytics/satisfaction'),
+    getTicketsChart: (period) => axiosInstance.get('/api/analytics/tickets/chart', { params: { period } }),
   },
 
-  // Чаты
+  // Чаты (ИСПРАВЛЕНО!)
   chats: {
-    getChats: (params) => axiosInstance.get('/chats', { params }),
-    getChat: (id) => axiosInstance.get(`/chats/${id}`),
-    sendMessage: (chatId, message) => axiosInstance.post(`/chats/${chatId}/messages`, message),
-    markAsRead: (chatId) => axiosInstance.post(`/chats/${chatId}/read`),
+    getAll: () => axiosInstance.get('/api/telegrambot/chats'),
+    getById: (id) => axiosInstance.get(`/api/telegrambot/chat/${id}`),
+    markAsRead: (chatId) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/markAsRead`),
+    sendMessage: (chatId, text) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/send`, { text }),
   },
 
   // Справочники
   references: {
     // Темы
-    getTopics: () => axiosInstance.get('/topics'),
-    createTopic: (data) => axiosInstance.post('/topics', data),
-    updateTopic: (id, data) => axiosInstance.put(`/topics/${id}`, data),
-    deleteTopic: (id) => axiosInstance.delete(`/topics/${id}`),
+    getTopics: () => axiosInstance.get('/api/topics'),
+    createTopic: (data) => axiosInstance.post('/api/topics', data),
+    updateTopic: (id, data) => axiosInstance.put(`/api/topics/${id}`, data),
+    deleteTopic: (id) => axiosInstance.delete(`/api/topics/${id}`),
+    
+    // Подкатегории
+    getSubcategories: (topicId) => axiosInstance.get('/api/subcategories', { params: topicId ? { topicId } : {} }),
+    createSubcategory: (data) => axiosInstance.post('/api/subcategories', data),
+    updateSubcategory: (id, data) => axiosInstance.put(`/api/subcategories/${id}`, data),
+    deleteSubcategory: (id) => axiosInstance.delete(`/api/subcategories/${id}`),
     
     // Шаблоны ответов
-    getCannedResponses: () => axiosInstance.get('/canned-responses'),
-    createCannedResponse: (data) => axiosInstance.post('/canned-responses', data),
-    updateCannedResponse: (id, data) => axiosInstance.put(`/canned-responses/${id}`, data),
-    deleteCannedResponse: (id) => axiosInstance.delete(`/canned-responses/${id}`),
+    getCannedResponses: (params) => axiosInstance.get('/api/canned-responses', { params: params || {} }),
+    createCannedResponse: (data) => axiosInstance.post('/api/canned-responses', data),
+    updateCannedResponse: (id, data) => axiosInstance.put(`/api/canned-responses/${id}`, data),
+    deleteCannedResponse: (id) => axiosInstance.delete(`/api/canned-responses/${id}`),
+  },
+
+  // Темы (для обратной совместимости)
+  topics: {
+    getAll: () => axiosInstance.get('/api/topics'),
+    getById: (id) => axiosInstance.get(`/api/topics/${id}`),
+    create: (data) => axiosInstance.post('/api/topics', data),
+    update: (id, data) => axiosInstance.put(`/api/topics/${id}`, data),
+    delete: (id) => axiosInstance.delete(`/api/topics/${id}`),
+  },
+
+  // Подкатегории (для обратной совместимости)
+  subcategories: {
+    getAll: (topicId) => axiosInstance.get('/api/subcategories', { params: topicId ? { topicId } : {} }),
+    getById: (id) => axiosInstance.get(`/api/subcategories/${id}`),
+    create: (data) => axiosInstance.post('/api/subcategories', data),
+    update: (id, data) => axiosInstance.put(`/api/subcategories/${id}`, data),
+    delete: (id) => axiosInstance.delete(`/api/subcategories/${id}`),
+  },
+
+  // Шаблоны ответов (для обратной совместимости)
+  cannedResponses: {
+    getAll: (params) => axiosInstance.get('/api/canned-responses', { params: params || {} }),
+    getById: (id) => axiosInstance.get(`/api/canned-responses/${id}`),
+    create: (data) => axiosInstance.post('/api/canned-responses', data),
+    update: (id, data) => axiosInstance.put(`/api/canned-responses/${id}`, data),
+    delete: (id) => axiosInstance.delete(`/api/canned-responses/${id}`),
   },
 
   // Уведомления
   notifications: {
-    getNotifications: (params) => axiosInstance.get('/notifications', { params }),
-    markAsRead: (id) => axiosInstance.post(`/notifications/${id}/read`),
-    markAllAsRead: () => axiosInstance.post('/notifications/read-all'),
-    deleteNotification: (id) => axiosInstance.delete(`/notifications/${id}`),
+    getMy: (params) => axiosInstance.get('/api/notifications', { params }),
+    getUnreadCount: () => axiosInstance.get('/api/notifications/unread-count'),
+    markAsRead: (id) => axiosInstance.post(`/api/notifications/${id}/mark-read`),
+    markAllAsRead: () => axiosInstance.post('/api/notifications/mark-all-read'),
+    create: (data) => axiosInstance.post('/api/notifications', data),
+    delete: (id) => axiosInstance.delete(`/api/notifications/${id}`),
+    clearRead: () => axiosInstance.delete('/api/notifications/clear-read'),
+  },
+
+  // Теги
+  tags: {
+    getAll: () => axiosInstance.get('/api/tags'),
+    create: (data) => axiosInstance.post('/api/tags', data),
+    update: (id, data) => axiosInstance.put(`/api/tags/${id}`, data),
+    delete: (id) => axiosInstance.delete(`/api/tags/${id}`),
+    addToTicket: (ticketId, tagId) => axiosInstance.post(`/api/tags/ticket/${ticketId}/add/${tagId}`),
+    removeFromTicket: (ticketId, tagId) => axiosInstance.delete(`/api/tags/ticket/${ticketId}/remove/${tagId}`),
+  },
+
+  // Логи активности
+  activityLogs: {
+    getAll: (params) => axiosInstance.get('/api/activitylogs', { params }),
+    getByUser: (userId, limit) => axiosInstance.get(`/api/activitylogs/user/${userId}`, { params: { limit } }),
+    getByTicket: (ticketId) => axiosInstance.get(`/api/activitylogs/ticket/${ticketId}`),
+  },
+
+  // Настройки бота
+  botSettings: {
+    get: () => axiosInstance.get('/api/botsettings'),
+    updateToken: (botToken) => axiosInstance.put('/api/botsettings/token', { botToken }),
+    toggle: (activate) => axiosInstance.post('/api/botsettings/toggle', null, { params: { activate } }),
+    updateWelcomeMessage: (message) => axiosInstance.put('/api/botsettings/welcome-message', { message }),
+    getStatus: () => axiosInstance.get('/api/botsettings/status'),
   },
 
   // Операторы
-  operators: {
-    getAvailableOperators: () => axiosInstance.get('/operator/available'),
-    getMyTickets: () => axiosInstance.get('/operator/my-tickets'),
-    takeTicket: (ticketId) => axiosInstance.post(`/operator/take-ticket/${ticketId}`),
-    releaseTicket: (ticketId) => axiosInstance.post(`/operator/release-ticket/${ticketId}`),
+  operator: {
+    getDashboard: () => axiosInstance.get('/api/operator/dashboard'),
+    getTicketHistory: (params) => axiosInstance.get('/api/operator/tickets/history', { params }),
+    getAvailableTickets: () => axiosInstance.get('/api/operator/tickets/available'),
+    acceptTicket: (ticketId) => axiosInstance.post(`/api/operator/tickets/${ticketId}/accept`),
+    completeTicket: (ticketId, comment) => axiosInstance.post(`/api/operator/tickets/${ticketId}/complete`, { comment }),
+    changeTicketStatus: (ticketId, newStatus, comment) => 
+      axiosInstance.put(`/api/operator/tickets/${ticketId}/status`, { newStatus, comment }),
+    escalateTicket: (ticketId, reason, comment) => 
+      axiosInstance.post(`/api/operator/tickets/${ticketId}/escalate`, { reason, comment }),
   },
 };
 
