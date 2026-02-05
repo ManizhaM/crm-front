@@ -22,9 +22,9 @@ import UsersPage from './pages/UsersPage';
 import SettingsPage from './pages/SettingsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import UserManagementPage from './pages/UserManagementPage';
-import OperatorDashboard from './pages/OperatorDashboard';
 import ForbiddenPage from './pages/ForbiddenPage';
 import RolesManagementPage from './pages/RolesManagementPage';
+import ActivityLogsPage from './pages/ActivityLogsPage';
 
 // Styles
 import './styles/globals.css';
@@ -120,13 +120,6 @@ function App() {
                 </ProtectedRoute>
               } />
               
-              {/* Панель оператора - доступна всем */}
-              <Route path="/operator" element={
-                <ProtectedRoute>
-                  <OperatorDashboard />
-                </ProtectedRoute>
-              } />
-              
               {/* Заявки - требуется tickets.view */}
               <Route path="/tickets" element={
                 <ProtectedRoute>
@@ -177,6 +170,15 @@ function App() {
                 <ProtectedRoute>
                   <RoleBasedRoute resource="roles" action="view" showForbidden>
                     <RolesManagementPage />
+                  </RoleBasedRoute>
+                </ProtectedRoute>
+              } />
+
+              {/* Логи активности - требуется logs.view */}
+              <Route path="/logs" element={
+                <ProtectedRoute>
+                  <RoleBasedRoute resource="logs" action="view" showForbidden>
+                    <ActivityLogsPage />
                   </RoleBasedRoute>
                 </ProtectedRoute>
               } />

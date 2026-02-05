@@ -9,7 +9,8 @@ import {
   FiSettings,
   FiBarChart2,
   FiHelpCircle,
-  FiShield
+  FiShield,
+  FiUserCheck
 } from 'react-icons/fi';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePermissions } from '../../hooks/usePermissions';
@@ -83,6 +84,14 @@ const Sidebar = ({ isOpen, onClose }) => {
       requiredPermission: { resource: 'roles', action: 'view' }
     },
     { 
+      id: 'logs', 
+      label: 'Логи', 
+      icon: <FiUserCheck />, 
+      path: '/logs',
+      badge: null,
+      requiredPermission: { resource: 'logs', action: 'view' }
+    },
+    { 
       id: 'settings', 
       label: 'Настройки', 
       icon: <FiSettings />, 
@@ -97,7 +106,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       path: '/help',
       badge: null,
       requiredPermission: null // Доступно всем
-    },
+    }
   ];
 
   // Фильтруем пункты меню по разрешениям

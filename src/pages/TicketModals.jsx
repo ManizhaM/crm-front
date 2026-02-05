@@ -11,14 +11,17 @@ import Button from '../components/common/Button';
 // ============================================
 
 export const CreateTicketModal = ({ onClose, onCreate, isLoading, topics, subcategories }) => {
+
+  
   const [formData, setFormData] = useState({
     clientName: '',
     clientPhone: '',
     description: '',
-    channel: 'PHONE',
+    channel: 1,   
     topicId: '',
     subcategoryId: ''
   });
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -77,14 +80,14 @@ export const CreateTicketModal = ({ onClose, onCreate, isLoading, topics, subcat
               <select
                 className="form-select"
                 value={formData.channel}
-                onChange={(e) => setFormData({ ...formData, channel: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, channel: Number(e.target.value) })}
                 required
               >
-                <option value="PHONE">Телефон</option>
-                <option value="EMAIL">Email</option>
-                <option value="WEB">Веб-сайт</option>
-                <option value="MOBILE_APP">Мобильное приложение</option>
-                <option value="TELEGRAM">Telegram</option>
+                <option value="2">Телефон</option>
+                <option value="3">Email</option>
+                <option value="4">Веб-сайт</option>
+                <option value="5">Мобильное приложение</option>
+                <option value="1">Telegram</option>
               </select>
             </div>
 

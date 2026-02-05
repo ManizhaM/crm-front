@@ -122,13 +122,22 @@ export const api = {
     getTicketsChart: (period) => axiosInstance.get('/api/analytics/tickets/chart', { params: { period } }),
   },
 
-  // Чаты (ИСПРАВЛЕНО!)
-  chats: {
-    getAll: () => axiosInstance.get('/api/telegrambot/chats'),
-    getById: (id) => axiosInstance.get(`/api/telegrambot/chat/${id}`),
-    markAsRead: (chatId) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/markAsRead`),
-    sendMessage: (chatId, text) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/send`, { text }),
-  },
+ // Чаты
+chats: {
+  // Существующие методы
+  getAll: () => axiosInstance.get('/api/telegrambot/chats'),
+  getById: (id) => axiosInstance.get(`/api/telegrambot/chat/${id}`),
+  markAsRead: (chatId) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/markAsRead`),
+  sendMessage: (chatId, text) => axiosInstance.post(`/api/telegrambot/chat/${chatId}/send`, { text }),
+  
+  // НОВЫЕ методы для системы очереди
+  getPending: () => axiosInstance.get('/api/chats/pending'),  // Чаты ожидающие принятия текущим оператором
+  getMyActive: () => axiosInstance.get('/api/chats/my-active'),  // Активные чаты текущего оператора
+  acceptChat: (chatId) => axiosInstance.post(`/api/chats/${chatId}/accept`),  // Принять чат
+  declineChat: (chatId, reason) => axiosInstance.post(`/api/chats/${chatId}/decline`, { reason }),  // Отклонить чат
+  getAssignmentHistory: (chatId) => axiosInstance.get(`/api/chats/${chatId}/assignment-history`),  // История назначений
+  getUnassigned: () => axiosInstance.get('/api/chats/unassigned'),  // Для админов - неназначенные чаты
+},
 
   // Справочники
   references: {
@@ -139,10 +148,10 @@ export const api = {
     deleteTopic: (id) => axiosInstance.delete(`/api/topics/${id}`),
     
     // Подкатегории
-    getSubcategories: (topicId) => axiosInstance.get('/api/subcategories', { params: topicId ? { topicId } : {} }),
-    createSubcategory: (data) => axiosInstance.post('/api/subcategories', data),
-    updateSubcategory: (id, data) => axiosInstance.put(`/api/subcategories/${id}`, data),
-    deleteSubcategory: (id) => axiosInstance.delete(`/api/subcategories/${id}`),
+    getSubcategories: (topicId) => axiosInstance.get('/api/Topics/subcategories', { params: { topicId } }),
+    createSubcategory: (data) => axiosInstance.post('/api/Topics/subcategories', data),
+    updateSubcategory: (id, data) => axiosInstance.put(`/api/Topics/subcategories/${id}`, data),
+    deleteSubcategory: (id) => axiosInstance.delete(`/api/Topics/subcategories/${id}`),
     
     // Шаблоны ответов
     getCannedResponses: (params) => axiosInstance.get('/api/canned-responses', { params: params || {} }),
@@ -162,11 +171,11 @@ export const api = {
 
   // Подкатегории (для обратной совместимости)
   subcategories: {
-    getAll: (topicId) => axiosInstance.get('/api/subcategories', { params: topicId ? { topicId } : {} }),
-    getById: (id) => axiosInstance.get(`/api/subcategories/${id}`),
-    create: (data) => axiosInstance.post('/api/subcategories', data),
-    update: (id, data) => axiosInstance.put(`/api/subcategories/${id}`, data),
-    delete: (id) => axiosInstance.delete(`/api/subcategories/${id}`),
+    getAll: (topicId) => axiosInstance.get(`/api/Topics/${topicId}/subcategories`),
+    getById: (id) => axiosInstance.get(`/api/Topics/subcategories/${id}`),
+    create: (data) => axiosInstance.post('/api/Topics/subcategories', data),
+    update: (id, data) => axiosInstance.put(`/api/Topics/subcategories/${id}`, data),
+    delete: (id) => axiosInstance.delete(`/api/Topics/subcategories/${id}`),
   },
 
   // Шаблоны ответов (для обратной совместимости)
@@ -200,11 +209,20 @@ export const api = {
   },
 
   // Логи активности
-  activityLogs: {
-    getAll: (params) => axiosInstance.get('/api/activitylogs', { params }),
-    getByUser: (userId, limit) => axiosInstance.get(`/api/activitylogs/user/${userId}`, { params: { limit } }),
-    getByTicket: (ticketId) => axiosInstance.get(`/api/activitylogs/ticket/${ticketId}`),
-  },
+ // Логи активности
+activityLogs: {
+  getAll: (params) => axiosInstance.get('/api/activitylogs', { params }),
+  getById: (id) => axiosInstance.get(`/api/activitylogs/${id}`),
+  getStatistics: (params) => axiosInstance.get('/api/activitylogs/statistics', { params }),
+  getUserLogs: (userId, params) => axiosInstance.get(`/api/activitylogs/user/${userId}`, { params }),
+  getActions: () => axiosInstance.get('/api/activitylogs/actions'),
+  getEntityTypes: () => axiosInstance.get('/api/activitylogs/entity-types'),
+  cleanup: (olderThanDays) => axiosInstance.delete('/api/activitylogs/cleanup', { params: { olderThanDays } }),
+  exportCSV: (params) => {
+    const queryString = new URLSearchParams(params).toString();
+    return `${API_URL}/api/activitylogs/export/csv?${queryString}`;
+  }
+},
 
   // Настройки бота
   botSettings: {
@@ -223,7 +241,7 @@ export const api = {
     acceptTicket: (ticketId) => axiosInstance.post(`/api/operator/tickets/${ticketId}/accept`),
     completeTicket: (ticketId, comment) => axiosInstance.post(`/api/operator/tickets/${ticketId}/complete`, { comment }),
     changeTicketStatus: (ticketId, newStatus, comment) => 
-      axiosInstance.put(`/api/operator/tickets/${ticketId}/status`, { newStatus, comment }),
+      axiosInstance.put(`/api/operator/tickets/${ticketId}/status`, { newStatus: Number(newStatus), comment }),
     escalateTicket: (ticketId, reason, comment) => 
       axiosInstance.post(`/api/operator/tickets/${ticketId}/escalate`, { reason, comment }),
   },

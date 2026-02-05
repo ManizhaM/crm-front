@@ -35,12 +35,12 @@ const Badge = ({
  */
 export const StatusBadge = ({ status, ...rest }) => {
   const statusConfig = {
-    New: { variant: 'info', label: 'Новая', icon: '🔵' },
-    InProgress: { variant: 'warning', label: 'В работе', icon: '🟡' },
-    WaitingForClient: { variant: 'secondary', label: 'Ждем клиента', icon: '🟠' },
-    Resolved: { variant: 'success', label: 'Решена', icon: '🟢' },
-    Closed: { variant: 'default', label: 'Закрыта', icon: '⚪' },
-    Escalated: { variant: 'danger', label: 'Эскалирована', icon: '🔴' }
+    1: { variant: 'info', label: 'Новая', icon: '🔵' },
+    2: { variant: 'warning', label: 'В работе', icon: '🟡' },
+    3: { variant: 'secondary', label: 'Ждем клиента', icon: '🟠' },
+    4: { variant: 'success', label: 'Решена', icon: '🟢' },
+    5: { variant: 'default', label: 'Закрыта', icon: '⚪' },
+    6: { variant: 'danger', label: 'Эскалирована', icon: '🔴' }
   };
 
   const config = statusConfig[status] || statusConfig.New;
