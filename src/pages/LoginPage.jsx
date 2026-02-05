@@ -75,7 +75,7 @@ const LoginPage = () => {
           <div className="form-group">
             <label className="form-label">Имя пользователя</label>
             <div className="input-wrapper">
-              <FiUser className="input-icon" />
+              {/* <FiUser className="input-icon" /> */}
               <input
                 type="text"
                 className="form-input"
@@ -90,7 +90,7 @@ const LoginPage = () => {
           <div className="form-group">
             <label className="form-label">Пароль</label>
             <div className="input-wrapper">
-              <FiLock className="input-icon" />
+              {/* <FiLock className="input-icon" /> */}
               <input
                 type={showPassword ? 'text' : 'password'}
                 className="form-input"

@@ -154,10 +154,10 @@ chats: {
     deleteSubcategory: (id) => axiosInstance.delete(`/api/Topics/subcategories/${id}`),
     
     // Шаблоны ответов
-    getCannedResponses: (params) => axiosInstance.get('/api/canned-responses', { params: params || {} }),
-    createCannedResponse: (data) => axiosInstance.post('/api/canned-responses', data),
-    updateCannedResponse: (id, data) => axiosInstance.put(`/api/canned-responses/${id}`, data),
-    deleteCannedResponse: (id) => axiosInstance.delete(`/api/canned-responses/${id}`),
+    getCannedResponses: (params) => axiosInstance.get('/api/CannedResponses'),
+    createCannedResponse: (data) => axiosInstance.post('/api/CannedResponses', data),
+    updateCannedResponse: (id, data) => axiosInstance.put(`/api/CannedResponses/${id}`, data),
+    deleteCannedResponse: (id) => axiosInstance.delete(`/api/CannedResponses/${id}`),
   },
 
   // Темы (для обратной совместимости)
@@ -180,9 +180,9 @@ chats: {
 
   // Шаблоны ответов (для обратной совместимости)
   cannedResponses: {
-    getAll: (params) => axiosInstance.get('/api/canned-responses', { params: params || {} }),
-    getById: (id) => axiosInstance.get(`/api/canned-responses/${id}`),
-    create: (data) => axiosInstance.post('/api/canned-responses', data),
+    getAll: (params) => axiosInstance.get('/api/CannedResponses'),
+    getById: (id) => axiosInstance.get(`/api/CannedResponses/${id}`),
+    create: (data) => axiosInstance.post('/api/CannedResponses', data),
     update: (id, data) => axiosInstance.put(`/api/canned-responses/${id}`, data),
     delete: (id) => axiosInstance.delete(`/api/canned-responses/${id}`),
   },
